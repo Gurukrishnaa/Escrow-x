@@ -61,6 +61,7 @@ contract EscrowManager is AccessControl, ReentrancyGuard {
         address seller;
         address verifier;
         uint256 amount;
+        uint256 duration;
         uint256 expiresAt;
         EscrowState state;
         string description;
@@ -195,6 +196,7 @@ contract EscrowManager is AccessControl, ReentrancyGuard {
             seller: seller,
             verifier: verifier,
             amount: amount,
+            duration: duration,
             expiresAt: 0, // Set on funding
             state: EscrowState.Created,
             description: description,
@@ -219,7 +221,7 @@ contract EscrowManager is AccessControl, ReentrancyGuard {
     {
         Escrow storage e = escrows[escrowId];
 
-        e.expiresAt = block.timestamp + DEFAULT_DURATION;
+        e.expiresAt = block.timestamp + e.duration;
         e.state = EscrowState.Funded;
 
         token.safeTransferFrom(msg.sender, address(this), e.amount);
